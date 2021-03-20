@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SteeringCS
+namespace MasKod2D
 {
    
     public class Vector2D

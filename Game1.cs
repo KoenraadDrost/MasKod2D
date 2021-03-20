@@ -1,6 +1,9 @@
-﻿using Microsoft.Xna.Framework;
+﻿using MasKod2D.behaviour;
+using MasKod2D.entity;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 
 namespace MasKod2D
 {
@@ -8,17 +11,24 @@ namespace MasKod2D
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+        private World world;
+        private MouseState oldState;
 
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            IsMouseVisible = true;
+            IsMouseVisible = true; 
         }
 
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            int width = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+            int height = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+
+            world = new World(width, height, GraphicsDevice);
+            world.populate();
 
             base.Initialize();
         }
@@ -28,6 +38,7 @@ namespace MasKod2D
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+            
         }
 
         protected override void Update(GameTime gameTime)
@@ -36,7 +47,13 @@ namespace MasKod2D
                 Exit();
 
             // TODO: Add your update logic here
+            MouseState newState = Mouse.GetState();
 
+            if (newState.LeftButton == ButtonState.Pressed && oldState.LeftButton == ButtonState.Released)
+            {
+                world.Target.Pos = new Vector2D(newState.X, newState.Y);
+            }
+            oldState = newState; // this reassigns the old state so that it is ready for next time
             base.Update(gameTime);
         }
 
@@ -45,6 +62,21 @@ namespace MasKod2D
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
+            foreach (MovingEntity me in world.entities)
+            {
+                //me.SB = new SeekBehaviour(me);
+                //me.SB = new FleeBehaviour(me);
+                me.SB = new ArriveBehaviour(me);
+                me.Update(0.8f);
+                _spriteBatch.Begin();
+                _spriteBatch.Draw(me.Texture, new Vector2((float)me.Pos.X, (float)me.Pos.Y), Color.White);
+                _spriteBatch.End();
+            }
+
+            // Target
+            _spriteBatch.Begin();
+            _spriteBatch.Draw(world.Target.Texture, new Vector2((float)world.Target.Pos.X, (float)world.Target.Pos.Y), Color.White);
+            _spriteBatch.End();
 
             base.Draw(gameTime);
         }
