@@ -31,8 +31,10 @@ namespace MasKod2D
             // ballPosition = new Vector2(_graphics.PreferredBackBufferWidth / 2,
             // _graphics.PreferredBackBufferHeight / 2);
             // ballSpeed = 100f;
-            int width = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-            int height = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+            //int width = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+            //int height = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+            int width = 800;
+            int height = 480;
 
             world = new World(width, height, GraphicsDevice);
             world.populate();
@@ -109,7 +111,8 @@ namespace MasKod2D
             {
                 //me.SB = new SeekBehaviour(me);
                 //me.SB = new FleeBehaviour(me);
-                me.SB = new ArriveBehaviour(me);
+                //me.SB = new ArriveBehaviour(me);
+                me.SB = new WanderBehaviour(me);
                 me.Update(0.8f);
                 _spriteBatch.Begin();
                 _spriteBatch.Draw(me.Texture, new Vector2((float)me.Pos.X, (float)me.Pos.Y), Color.White);
