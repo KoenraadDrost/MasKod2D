@@ -51,7 +51,7 @@ namespace MasKod2D
 
             if (newState.LeftButton == ButtonState.Pressed && oldState.LeftButton == ButtonState.Released)
             {
-                world.Target.Pos = new Vector2D(newState.X, newState.Y);
+                world.Target.Pos = new Vector2D(newState.X - (world.Target.Texture.Width / 2), newState.Y - (world.Target.Texture.Height / 2));
             }
             oldState = newState; // this reassigns the old state so that it is ready for next time
             base.Update(gameTime);
@@ -66,10 +66,18 @@ namespace MasKod2D
             {
                 //me.SB = new SeekBehaviour(me);
                 //me.SB = new FleeBehaviour(me);
-                me.SB = new ArriveBehaviour(me);
+                //me.SB = new ArriveBehaviour(me);
+                me.SB = new HideBehaviour(me);
                 me.Update(0.8f);
                 _spriteBatch.Begin();
                 _spriteBatch.Draw(me.Texture, new Vector2((float)me.Pos.X, (float)me.Pos.Y), Color.White);
+                _spriteBatch.End();
+            }
+
+            foreach (StaticEntity se in world.obstacles)
+            {
+                _spriteBatch.Begin();
+                _spriteBatch.Draw(se.Texture, new Vector2((float)se.Pos.X, (float)se.Pos.Y), Color.White);
                 _spriteBatch.End();
             }
 

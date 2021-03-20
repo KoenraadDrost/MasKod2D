@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MasKod2D.behaviour
 {
-    enum Deceleration
+    public enum Deceleration
     {
         slow = 3,
         normal = 2,
@@ -16,14 +16,26 @@ namespace MasKod2D.behaviour
 
     public class ArriveBehaviour : SteeringBehaviour
     {
-        public ArriveBehaviour(MovingEntity me) : base(me) { }
+        public Vector2D Target { get; set; }
+        public Deceleration Speed { get; set; }
+
+        public ArriveBehaviour(MovingEntity me) : base(me) 
+        {
+            Target = ME.MyWorld.Target.Pos;
+            Speed = Deceleration.normal;
+        }
+
+        public ArriveBehaviour(MovingEntity me, Vector2D bestHidingSpot, Deceleration speed) : base(me) 
+        {
+            Target = bestHidingSpot;
+            Speed = speed;
+        }
 
         public override Vector2D Calculate()
         {
-            Vector2D target = ME.MyWorld.Target.Pos;
             Vector2D vehicle = ME.Pos;
 
-            Vector2D ToTarget = new Vector2D(target.X - vehicle.X, target.Y - vehicle.Y);
+            Vector2D ToTarget = new Vector2D(Target.X - vehicle.X, Target.Y - vehicle.Y);
 
             // calculate the distance to the target position
             double dist = ToTarget.Length();
@@ -35,7 +47,7 @@ namespace MasKod2D.behaviour
                 const double DecelerationTweaker = .25;
 
                 // calculate the speed required to reach the target given the desired deceleration
-                double speed = dist / ((double)Deceleration.normal * DecelerationTweaker);
+                double speed = dist / ((double)Speed * DecelerationTweaker);
 
                 // make sure the velocity does not exceed the max
                 speed -= ME.MaxSpeed;
