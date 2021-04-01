@@ -162,5 +162,44 @@ namespace MasKod2D.util
 
             return m;
         }
+
+        public Matrix2D RotateMatrix(Vector2D front, Vector2D side)
+        {
+            Matrix2D m = new Matrix2D(3);
+
+            m.mat[0,0] = (float)front.X; m.mat[0, 1] = (float)front.Y; m.mat[0, 2] = 0;
+
+            m.mat[1,0] = (float)side.X; m.mat[1,1] = (float)side.Y; m.mat[1,2] = 0;
+
+            m.mat[2,0] = 0; m.mat[2,1] = 0; m.mat[2,2] = 1;
+
+            return m * new Matrix2D(3);
+        }
+
+        public Matrix2D Translate(double x, double y)
+        {
+            Matrix2D m = new Matrix2D(3);
+
+            m.mat[0, 0] = 1; m.mat[0, 1] = 0; m.mat[0, 2] = 0;
+
+            m.mat[1, 0] = 0; m.mat[1, 1] = 1; m.mat[1, 2] = 0;
+
+            m.mat[2, 0] = (float)x; m.mat[2, 1] = (float)y; m.mat[2, 2] = 1;
+
+            return m * this;
+        }
+
+        public void TransformVector2Ds(Vector2D vPoint)
+        {
+            double tempX = (this.mat[0,0] * vPoint.X) + (this.mat[1, 0] * vPoint.Y) + (this.mat[2, 0]);
+
+            double tempY = (this.mat[0, 1] * vPoint.X) + (this.mat[1, 1] * vPoint.Y) + (this.mat[2, 1]);
+
+            vPoint.X = tempX;
+
+            vPoint.Y = tempY;
+
+            Console.WriteLine($"TempX = {tempX}, TempY = {tempY}");
+        }
     }
 }
