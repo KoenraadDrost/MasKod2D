@@ -19,9 +19,9 @@ namespace MasKod2D
 
         public abstract void Update(float delta);
 
-        public virtual void Render(GraphicsDevice g)
+        public virtual void Render(SpriteBatch spriteBatch)
         {
-            //g.FillEllipse(Brushes.Blue, new Rectangle((int)Pos.X, (int)Pos.Y, 10, 10));
+            
         }
 
 

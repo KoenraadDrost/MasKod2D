@@ -1,9 +1,12 @@
 ﻿using MasKod2D.behaviour;
 using MasKod2D.entity;
+using MasKod2D.GraphFromBook;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MasKod2D
 {
@@ -28,7 +31,9 @@ namespace MasKod2D
             int height = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
 
             world = new World(width, height, GraphicsDevice);
-            world.populate();
+            world.GenerateGraph();
+            world.Populate();
+            
 
             base.Initialize();
         }
@@ -62,31 +67,10 @@ namespace MasKod2D
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
-            foreach (MovingEntity me in world.entities)
-            {
-                //me.SB = new SeekBehaviour(me);
-                //me.SB = new FleeBehaviour(me);
-                //me.SB = new ArriveBehaviour(me);
-                me.SB = new HideBehaviour(me);
-                me.Update(0.8f);
-                _spriteBatch.Begin();
-                _spriteBatch.Draw(me.Texture, new Vector2((float)me.Pos.X, (float)me.Pos.Y), Color.White);
-                _spriteBatch.End();
-            }
-
-            foreach (StaticEntity se in world.obstacles)
-            {
-                _spriteBatch.Begin();
-                _spriteBatch.Draw(se.Texture, new Vector2((float)se.Pos.X, (float)se.Pos.Y), Color.White);
-                _spriteBatch.End();
-            }
-
-            // Target
-            _spriteBatch.Begin();
-            _spriteBatch.Draw(world.Target.Texture, new Vector2((float)world.Target.Pos.X, (float)world.Target.Pos.Y), Color.White);
-            _spriteBatch.End();
-
+            world.Update(0.8f, _spriteBatch);
+          
             base.Draw(gameTime);
         }
+
     }
 }

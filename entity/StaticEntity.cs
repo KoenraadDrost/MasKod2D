@@ -20,5 +20,13 @@ namespace MasKod2D.entity
         {
             throw new NotImplementedException();
         }
+
+        public override void Render(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Begin();
+            spriteBatch.Draw(Texture, new Vector2((float)Pos.X, (float)Pos.Y), Color.White);
+            spriteBatch.End();
+        }
+
     }
 }

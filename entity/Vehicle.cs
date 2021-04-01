@@ -23,18 +23,11 @@ namespace MasKod2D.entity
 
         }
 
-        public override void Render(GraphicsDevice g)
+        public override void Render(SpriteBatch spriteBatch)
         {
-            /*double leftCorner = Pos.X - Scale;
-            double rightCorner = Pos.Y - Scale;
-            double size = Scale * 2;
-
-
-            Pen p = new Pen(VColor, 2);
-            g.DrawEllipse(p, new Rectangle((int)leftCorner, (int)rightCorner, (int)size, (int)size));
-            g.DrawEllipse(p, new Rectangle((int)leftCorner - 45, (int)rightCorner - 45, (int)size * 10, (int)size * 10));
-            g.DrawLine(p, (int)Pos.X, (int)Pos.Y, (int)Pos.X + (int)(Velocity.X * 2), (int)Pos.Y + (int)(Velocity.Y * 2));*/
-
+            spriteBatch.Begin();
+            spriteBatch.Draw(Texture, new Vector2((float)Pos.X, (float)Pos.Y), Color.White);
+            spriteBatch.End();
         }
     }
 }

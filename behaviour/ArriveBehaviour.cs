@@ -42,6 +42,7 @@ namespace MasKod2D.behaviour
 
             if (dist > 0)
             {
+                Console.WriteLine(dist);
                 // because Deceleration is enumerated as an int,
                 // this value is required to provide fine tweaking of the deceleration
                 const double DecelerationTweaker = .25;
