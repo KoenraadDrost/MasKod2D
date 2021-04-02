@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using MasKod2D.entity;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,15 +10,16 @@ namespace MasKod2D.GraphFromBook
     {
         public Node StartLocation { get; set; }
         public Node EndLocation { get; set; }
-        public Dictionary<Node, bool> Map { get; set; }
+        public List<Node> Map { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
+        public List<Node> Unwalkables { get; set; }
 
         public Graph(int width, int height)
         {
             StartLocation = new Node(0, 0, true);
             EndLocation = new Node(0, 0, true);
-            Map = new Dictionary<Node, bool>();
+            Map = new List<Node>();
             Width = width;
             Height = height;
 
@@ -26,17 +28,17 @@ namespace MasKod2D.GraphFromBook
             {
                 for (int j = 0; j < height; j++)
                 {
-                    Map.Add(new Node(i, j, true), true);
+                    Map.Add(new Node(i, j, true));
                 }
             }
         }
 
         public Node GetNode(float x, float y)
         {
-            foreach (KeyValuePair<Node, bool> node in Map)
+            foreach (Node node in Map)
             {
-                if (node.Key.Location.X == x && node.Key.Location.Y == y)
-                    return node.Key; 
+                if (node.Location.X == x && node.Location.Y == y)
+                    return node; 
             }
             return null;
         }
@@ -44,6 +46,7 @@ namespace MasKod2D.GraphFromBook
         private bool Search(Node currentNode)
         {
             currentNode.State = NodeState.Closed;
+
             // Get list of adjacent walkable nodes
             List<Node> nextNodes = GetAdjacentWalkableNodes(currentNode);
             
@@ -90,7 +93,7 @@ namespace MasKod2D.GraphFromBook
             if (currentNode.Location.Y + 1 < Height)
                 adj.Add(GetNode(currentNode.Location.X, currentNode.Location.Y + 1));
 
-            /*// Top Left
+            // Top Left
             if (currentNode.Location.X - 1 > -1 && currentNode.Location.Y - 1 > -1)
                 adj.Add(GetNode(currentNode.Location.X - 1, currentNode.Location.Y - 1));
 
@@ -104,7 +107,18 @@ namespace MasKod2D.GraphFromBook
 
             // Bottom Right
             if (currentNode.Location.X + 1 < Width && currentNode.Location.Y + 1 < Height)
-                adj.Add(GetNode(currentNode.Location.X + 1, currentNode.Location.Y + 1));*/
+                adj.Add(GetNode(currentNode.Location.X + 1, currentNode.Location.Y + 1));
+
+
+            //BUG walkables worden niet herkent daarom deze loops
+            foreach(Node a in adj)
+            {
+                foreach(Node u in Unwalkables)
+                {
+                    if (a.Location == u.Location)
+                        a.IsWalkable = false;
+                }  
+            }
 
             return adj;
         }
@@ -148,7 +162,7 @@ namespace MasKod2D.GraphFromBook
                 {
                     // If it's untested, set the parent and flag it as 'Open' for consideration
                     node.ParentNode = fromNode;
-                    node.SetF(node, node.ParentNode, EndLocation);
+                    node.GetTraversalCost(node, node.ParentNode, EndLocation);
                     node.State = NodeState.Open;
                     walkableNodes.Add(node);
                 }
@@ -159,8 +173,33 @@ namespace MasKod2D.GraphFromBook
             return walkableNodes;
         }
 
-        public List<Node> FindPath()
+        private void ResetMap(MovingEntity me)
         {
+            Map.Clear();
+            Unwalkables = me.MyWorld.unwalkables;
+            for (int i = 0; i < Width; i++)
+            {
+                for (int j = 0; j < Width; j++)
+                {
+                    foreach(Node n in Unwalkables)
+                    {
+                        if (n.Location.X == i && n.Location.Y == j)
+                            Map.Add(new Node(i, j, false));
+                        else
+                            Map.Add(new Node(i, j, true));
+                    }
+                    
+                }
+            }
+        }
+
+        public List<Node> FindPath(MovingEntity me)
+        {
+            ResetMap(me);
+            me.Start.ParentNode = null;
+            StartLocation = me.Start;
+            EndLocation = me.End;
+
             List<Node> path = new List<Node>();
             bool success = Search(StartLocation);
             if (success)
@@ -173,6 +212,7 @@ namespace MasKod2D.GraphFromBook
                 }
                 path.Reverse();
             }
+
             return path;
         }
     }

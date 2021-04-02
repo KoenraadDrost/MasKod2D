@@ -1,4 +1,5 @@
 ﻿using MasKod2D.behaviour;
+using MasKod2D.GraphFromBook;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,10 @@ namespace MasKod2D.entity
         public float MaxSpeed { get; set; }
 
         public SteeringBehaviour SB { get; set; }
+
+        public Node Start { get; set; }
+        public Node End{ get; set; }
+        public List<Node> Path { get; set; }
 
         public MovingEntity(Vector2D pos, World w, Texture2D t) : base(pos, w, t)
         {

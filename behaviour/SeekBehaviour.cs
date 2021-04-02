@@ -13,12 +13,11 @@ namespace MasKod2D.behaviour
         public SeekBehaviour(MovingEntity me) : base(me) {}
         public override Vector2D Calculate()
         {
-            Vector2D target = ME.MyWorld.Target.Pos;
+            Vector2D target = ME.MyWorld.Player.Pos;
             Vector2D vehicle = ME.Pos;
             
             Vector2D dis = new Vector2D(target.X - vehicle.X, target.Y - vehicle.Y);
            
-            //Console.WriteLine(dis.Length());
             Vector2D disNormalized = dis.Normalize();
             Vector2D desiredVelocity = disNormalized.Multiply(ME.MaxSpeed);
             return desiredVelocity.Sub(ME.Velocity);

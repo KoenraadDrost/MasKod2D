@@ -15,13 +15,14 @@ namespace MasKod2D
     {
         public List<MovingEntity> entities = new List<MovingEntity>();
         public List<StaticEntity> obstacles = new List<StaticEntity>();
+        public List<Node> unwalkables = new List<Node>();
         public Vehicle Target { get; set; }
         public Vehicle Player { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
         public GraphicsDevice GD { get; set; }
         public Graph Graph { get; set; }
-        private int waypointCount = 0;
+        public int F { get; set; } = 100;
 
         public World(int w, int h, GraphicsDevice gd)
         {
@@ -32,75 +33,83 @@ namespace MasKod2D
 
         public void GenerateGraph()
         {
-            Graph = new Graph(8, 6);
-            Graph.StartLocation = new Node(0, 0, true);
-            Graph.EndLocation = new Node(5, 2, true);
-            Graph.GetNode(3, 0).IsWalkable = false;
-            Graph.GetNode(3, 1).IsWalkable = false;
-            Graph.GetNode(3, 2).IsWalkable = false;
-            Graph.GetNode(3, 3).IsWalkable = false;
-            //Graph.GetNode(3, 4).IsWalkable = false;
+            Graph = new Graph(12, 10);
+            unwalkables.Add(new Node(3, 2, false));
+            unwalkables.Add(new Node(3, 3, false));
+
+            unwalkables.Add(new Node(1, 5, false));
+            unwalkables.Add(new Node(1, 6, false));
+
+            unwalkables.Add(new Node(4, 5, false));
+            unwalkables.Add(new Node(4, 7, false));
+
+            unwalkables.Add(new Node(6, 2, false));
+            unwalkables.Add(new Node(7, 4, false));
         }
 
         public void Populate()
         {
-            /*Vehicle v = new Vehicle(new Vector2D(50, 50), this, new Texture2D(GD, 20, 20));
-            entities.Add(v);*/
+            
 
-            Player = new Vehicle(new Vector2D(300, 300), this, new Texture2D(GD, 20, 20));
-            Player.Pos = new Vector2D(Graph.StartLocation.Location.X * 99, Graph.StartLocation.Location.Y * 99);
+            Player = new Vehicle(new Vector2D(100, 100), this, new Texture2D(GD, 20, 20), Color.White);
+            Player.MaxSpeed = 100;
+            Player.Start = new Node(1, 1, true);
+            Player.End = new Node(5, 2, true);
+            Player.Pos = new Vector2D(Player.Start.Location.X * F, Player.Start.Location.Y * F);
+            Player.SB = new PathFollowingBehaviour(Player);
+            //Player.Path = Graph.FindPath(Player);
 
-            Target = new Vehicle(new Vector2D(Graph.EndLocation.Location.X, Graph.EndLocation.Location.Y), this, new Texture2D(GD, 20, 20));
+            Vehicle v = new Vehicle(new Vector2D(400, 400), this, new Texture2D(GD, 20, 20), Color.Orange);
+            v.MaxSpeed = 25;
+            v.Start = new Node(4, 4);
+            v.End = Player.End;
+            v.SB = new PathFollowingBehaviour(v);
+            entities.Add(v);
+
+            //Target = new Vehicle(new Vector2D(Graph.EndLocation.Location.X, Graph.EndLocation.Location.Y), this, new Texture2D(GD, 20, 20));
         }
 
         public void Update(float timeElapsed, SpriteBatch spriteBatch)
         {
-            GenerateGraph();
-            
-            List<Node> shortestPath = Graph.FindPath();
-            // Calculate the shortest path and set waypoints
-            if (waypointCount < shortestPath.Count)
-            {
-                Node WayPoint = shortestPath[waypointCount];
-
-                //Draw path
-                Graph.GetNode(Graph.StartLocation.Location.X, Graph.StartLocation.Location.Y).Color = Color.LightGreen;               
-                foreach(Node n in shortestPath)
-                {
-                    Graph.GetNode(n.Location.X, n.Location.Y).Color = Color.AntiqueWhite;
-                }
-                Graph.GetNode(Graph.EndLocation.Location.X, Graph.EndLocation.Location.Y).Color = Color.Yellow;
-
-                // Get distance to target
-                Vector2D target = Player.MyWorld.Target.Pos;
-                Vector2D vehicle = Player.Pos;
-                Vector2D dis = new Vector2D(target.X - vehicle.X, target.Y - vehicle.Y);
-                
-                // Go to next waypoint when close to target
-                if(dis.Length() < 1)
-                {
-                    waypointCount++;
-                }
-
-                Player.Render(spriteBatch);
-                Player.SB = new PathFollowingBehaviour(Player, WayPoint);
-                Player.Update(0.8f);
-            }
+            Player.Render(spriteBatch);
+            Player.Update(0.8f);
             
 
             foreach (MovingEntity me in entities)
-            {
-                me.SB = new SeekBehaviour(me);
+            { 
                 me.Update(0.8f);
                 me.Render(spriteBatch);
             }
 
-            foreach (KeyValuePair<Node, bool> node in Graph.Map)
+            foreach (Node node in Graph.Map)
             {
-                node.Key.Render(GD, spriteBatch);
+                // Color path of player
+                foreach (Node n in Player.Path)
+                {
+                    if (n.Location == node.Location)
+                        node.Color = Color.White;
+                }
+
+                // Color path of all entities
+                foreach (MovingEntity me in entities)
+                {
+                    foreach (Node n in me.Path)
+                    {
+                        if (n.Location == node.Location)
+                            node.Color = Color.Orange;
+                    }
+                }
+
+                // Color all unwalkable nodes
+                foreach (Node n in unwalkables)
+                {
+                    if (n.Location == node.Location)
+                        node.Color = Color.Red;
+                }
+                node.Render(spriteBatch, F);
             }
 
-            foreach(StaticEntity se in obstacles)
+            foreach (StaticEntity se in obstacles)
             {
                 se.Render(spriteBatch);
             }

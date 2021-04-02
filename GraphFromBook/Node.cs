@@ -19,44 +19,49 @@ namespace MasKod2D.GraphFromBook
         public int Width { get; set; }
         public Color Color { get; set; }
 
+        public Node(int x, int y)
+        {
+            Location = new Vector2(x, y);
+            State = NodeState.Untested;
+            ParentNode = null;
+            Width = 5;
+            Color = Color.Black;
+        }
+
         public Node(int x, int y, bool isWalkable)
         {
             Location = new Vector2(x, y);
             IsWalkable = isWalkable;
             State = NodeState.Untested;
             ParentNode = null;
-            Width = 20;
+            Width = 5;
             Color = Color.Black;
         }
 
-        public float GetTraversalCost(Node location, Node parentNodeLocation, Node endLocation)
+        public float GetTraversalCost(Node node, Node parentNode, Node end)
         {
-            ParentNode = parentNodeLocation;
-            G = Vector2.Distance(location.Location, parentNodeLocation.Location);
-            H = Vector2.Distance(location.Location, endLocation.Location);
+            ParentNode = parentNode;
+            G = Vector2.Distance(node.Location, parentNode.Location);
+            H = Vector2.Distance(node.Location, end.Location);
             return F;
         }
 
-        public float SetF(Node location, Node parentNodeLocation, Node endLocation)
+        public void Render(SpriteBatch spriteBatch, int f)
         {
-            ParentNode = parentNodeLocation;
-            G = Vector2.Distance(location.Location, parentNodeLocation.Location);
-            H = Vector2.Distance(location.Location, endLocation.Location);
-            return F;
-        }
+            int x = Convert.ToInt32(Location.X * f);
+            int y = Convert.ToInt32(Location.Y * f);
 
-        public void Render(GraphicsDevice gd, SpriteBatch spriteBatch)
-        {
-            Texture2D texture = new Texture2D(gd, Width, Width);
-            Color[] data = new Color[Width * Width];
+            Point location = new Point(x, y);
+            Point size = new Point(f);
+            Rectangle rec = new Rectangle(location, size);
 
-            if (!IsWalkable)
-                Color = Color.Red;
+            Vector2 center = new Vector2(x, y);
+            float radius = 10f;
+            int sides = 4;
 
-            for (int i = 0; i < (Width * Width); ++i) data[i] = Color;
-            texture.SetData<Color>(data);
             spriteBatch.Begin();
-            spriteBatch.Draw(texture, new Vector2(Location.X * 100, Location.Y * 100), Color);
+            //Primitives2D.DrawRectangle(spriteBatch, rec, Color.Black);
+            Primitives2D.DrawCircle(spriteBatch, center, radius, sides, Color);
             spriteBatch.End();
         }
     }

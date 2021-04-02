@@ -27,10 +27,14 @@ namespace MasKod2D
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            int width = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-            int height = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+            //int width = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+            //int height = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
 
-            world = new World(width, height, GraphicsDevice);
+            _graphics.PreferredBackBufferWidth = 900;
+            _graphics.PreferredBackBufferHeight = 700;
+            _graphics.ApplyChanges();
+
+            world = new World(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight, GraphicsDevice);
             world.GenerateGraph();
             world.Populate();
             
@@ -56,7 +60,16 @@ namespace MasKod2D
 
             if (newState.LeftButton == ButtonState.Pressed && oldState.LeftButton == ButtonState.Released)
             {
-                world.Target.Pos = new Vector2D(newState.X - (world.Target.Texture.Width / 2), newState.Y - (world.Target.Texture.Height / 2));
+                double x = Math.Round(newState.X / 1024.0, 1) * 10;
+                double y = Math.Round(newState.Y / 1024.0, 1) * 10;
+                Console.WriteLine("X: " + x + " Y: " + y);
+
+                world.Player.End = world.Graph.GetNode((float)x, (float)y);
+                foreach(MovingEntity me in world.entities)
+                {
+                    me.End = world.Graph.GetNode((float)x, (float)y);
+                }
+
             }
             oldState = newState; // this reassigns the old state so that it is ready for next time
             base.Update(gameTime);
