@@ -1,5 +1,6 @@
 ﻿using MasKod2D.behaviour;
 using MasKod2D.entity;
+using MasKod2D.state;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -33,6 +34,11 @@ namespace MasKod2D
             Target = new Vehicle(new Vector2D(100, 60), this, new Texture2D(GD, 20, 20));
             Target.VColor = Color.DarkRed;
             Target.Pos = new Vector2D(200, 200);
+
+            // TODO: Move to individual entity later
+            StateMachine sM = new StateMachine();
+            Console.WriteLine($"Statemachine test: ");
+            sM.RunScript();
         }
 
         /*public void Update(float timeElapsed)
