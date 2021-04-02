@@ -62,6 +62,30 @@ namespace MasKod2D
             return this;
         }
 
+        public Vector2D Perpendicular()
+        {
+            return new Vector2D(-Y, X);
+        }
+
+        // Operators
+        public static Vector2D operator +(Vector2D v1, Vector2D v2)
+        {
+            return new Vector2D((v1.X + v2.X), (v1.Y + v2.Y));
+        }
+        public static Vector2D operator -(Vector2D v1, Vector2D v2)
+        {
+            return new Vector2D((v1.X - v2.X), (v1.Y - v2.Y));
+        }
+        public static Vector2D operator *(Vector2D v1, float f1)
+        {
+            return new Vector2D((v1.X * f1), (v1.Y * f1));
+        }
+
+        public static Vector2D operator *(float f1, Vector2D v1)
+        {
+            return v1 * f1;
+        }
+
         public Vector2D Normalize()
         {
             X = X / Length();

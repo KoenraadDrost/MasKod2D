@@ -12,6 +12,8 @@ namespace MasKod2D.entity
     public abstract class MovingEntity : BaseGameEntity
     {
         public Vector2D Velocity { get; set; }
+        public Vector2D Heading { get; set; }
+        public Vector2D Side { get; set; }
         public float Mass { get; set; }
         public float MaxSpeed { get; set; }
 
@@ -22,6 +24,8 @@ namespace MasKod2D.entity
             Mass = 30;
             MaxSpeed = 150;
             Velocity = new Vector2D();
+            Heading = new Vector2D();
+            Side = new Vector2D();
         }
 
         public override void Update(float timeElapsed)
@@ -40,6 +44,14 @@ namespace MasKod2D.entity
 
             // update the position
             Pos = Pos.Add(Velocity.Multiply(timeElapsed));
+
+            // update the heading if velocity is greater than 0.
+            if(Velocity.LengthSquared() > 0.001)
+            {
+                Heading = Velocity.Normalize();
+
+                Side = Heading.Perpendicular();
+            }
         }
 
         public override string ToString()
