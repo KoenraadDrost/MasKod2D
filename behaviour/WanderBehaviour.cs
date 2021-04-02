@@ -34,8 +34,6 @@ namespace MasKod2D.behaviour
 
             //TransMatrix.TransformVector2Ds(TransVector);
 
-            Console.WriteLine("TRansvector" + TransVector);
-
             return TransVector;
         }
 
@@ -55,49 +53,26 @@ namespace MasKod2D.behaviour
                 distanceSq = Math.Sqrt(Math.Pow(ME.Pos.X - targetWorld.X, 2) + Math.Pow(ME.Pos.X - targetWorld.Y, 2));
             }
 
-            if (distanceSq < 1 || distanceSq < 10)
+            if (distanceSq < 10)
             {
-
-                //Console.WriteLine($"Random test: {ClampedRandDouble()}");
-
                 // Random target ( random x and y between -50 and +50 )
                 Vector2D WanderTarget = new Vector2D(ClampedRandDouble() * WanderJitter,
                                                      ClampedRandDouble() * WanderJitter); // example: X = 45.341, Y = -11.576
-                                                                                          // Convert to target in wander area.
+                // Convert to target in wander area.
                 WanderTarget.Normalize();
                 WanderTarget.Multiply(WanderRadius);
 
-                Console.WriteLine($"Multiply test: {WanderTarget}");
-
                 // Add distance relative to entity.
                 Vector2D targetLocal = WanderTarget.Add(new Vector2D(WanderDistance, 0));
-
-                Console.WriteLine($"Add Vector test: {targetLocal}");
 
                 // Convert to target in world space.
                 targetWorld = PointToWorldSpace(targetLocal,
                                                             ME.Heading,
                                                             ME.Side,
                                                             ME.Pos);
-
-                Console.WriteLine("TargetWorld: " + targetWorld);
             }
 
-            Console.WriteLine("TargetWorld: " + targetWorld);
-
             return targetWorld - ME.Pos;
-
-            // Approach heading.
-            //Vector2D target = ME.Heading;
-            //Vector2D vehicle = ME.Pos;
-
-            //Vector2D targetMinVehicle = new Vector2D(target.X - vehicle.X, target.Y - vehicle.Y); // Vector(100, 100)
-            //Vector2D normalized = targetMinVehicle.Normalize(); // Vector(0.71, 0.71)
-
-            //Vector2D desiredVelocity = normalized.Multiply(ME.MaxSpeed);
-
-
-            //return desiredVelocity.Sub(ME.Velocity);
         }
     }
 }
