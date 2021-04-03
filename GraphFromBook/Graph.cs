@@ -14,21 +14,24 @@ namespace MasKod2D.GraphFromBook
         public int Width { get; set; }
         public int Height { get; set; }
         public List<Node> Unwalkables { get; set; }
+        public int Scale { get; set; }
+        public bool IsVisible { get; set; }
 
         public Graph(int width, int height)
         {
-            StartLocation = new Node(0, 0, true);
-            EndLocation = new Node(0, 0, true);
+            StartLocation = new Node(0, 0, true, Scale);
+            EndLocation = new Node(0, 0, true, Scale);
             Map = new List<Node>();
             Width = width;
             Height = height;
+            IsVisible = false;
 
             //Create map
             for (int i = 0; i < width; i++)
             {
                 for (int j = 0; j < height; j++)
                 {
-                    Map.Add(new Node(i, j, true));
+                    Map.Add(new Node(i, j, true, Scale));
                 }
             }
         }
@@ -184,9 +187,9 @@ namespace MasKod2D.GraphFromBook
                     foreach(Node n in Unwalkables)
                     {
                         if (n.Location.X == i && n.Location.Y == j)
-                            Map.Add(new Node(i, j, false));
+                            Map.Add(new Node(i, j, false, Scale));
                         else
-                            Map.Add(new Node(i, j, true));
+                            Map.Add(new Node(i, j, true, Scale));
                     }
                     
                 }

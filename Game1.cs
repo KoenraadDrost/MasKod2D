@@ -15,8 +15,8 @@ namespace MasKod2D
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private World world;
-        private MouseState oldState;
-
+        private MouseState oldMouseState;
+        private KeyboardState oldKeyboardState;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -32,6 +32,7 @@ namespace MasKod2D
 
             _graphics.PreferredBackBufferWidth = 900;
             _graphics.PreferredBackBufferHeight = 700;
+            _graphics.IsFullScreen = true;
             _graphics.ApplyChanges();
 
             world = new World(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight, GraphicsDevice);
@@ -56,22 +57,37 @@ namespace MasKod2D
                 Exit();
 
             // TODO: Add your update logic here
-            MouseState newState = Mouse.GetState();
+            MouseState newMouseState = Mouse.GetState();
+            KeyboardState newKeyboardState = Keyboard.GetState();
 
-            if (newState.LeftButton == ButtonState.Pressed && oldState.LeftButton == ButtonState.Released)
+            if (newMouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released)
             {
-                double x = Math.Round(newState.X / 1024.0, 1) * 10;
-                double y = Math.Round(newState.Y / 1024.0, 1) * 10;
+                double x = Math.Floor(newMouseState.X / (double)world.Graph.Scale);
+                double y = Math.Floor(newMouseState.Y / (double)world.Graph.Scale);
                 Console.WriteLine("X: " + x + " Y: " + y);
 
-                world.Player.End = world.Graph.GetNode((float)x, (float)y);
-                foreach(MovingEntity me in world.entities)
+                // Check if position clicked is an existing node
+                foreach(Node n in world.Graph.Map)
                 {
-                    me.End = world.Graph.GetNode((float)x, (float)y);
+                    if(n.Location.X == x && n.Location.Y == y)
+                    {
+                        world.Player.End = world.Graph.GetNode((float)x, (float)y);
+                        foreach (MovingEntity me in world.entities)
+                        {
+                            me.End = world.Graph.GetNode((float)x, (float)y);
+                        }
+                    }
                 }
-
             }
-            oldState = newState; // this reassigns the old state so that it is ready for next time
+            oldMouseState = newMouseState; // this reassigns the old state so that it is ready for next time
+
+            if (!oldKeyboardState.IsKeyDown(Keys.G) && newKeyboardState.IsKeyDown(Keys.G))
+            {
+                world.Graph.IsVisible = !world.Graph.IsVisible;
+            }
+
+            oldKeyboardState = newKeyboardState;
+
             base.Update(gameTime);
         }
 
