@@ -110,9 +110,9 @@ namespace MasKod2D
             foreach (MovingEntity me in world.entities)
             {
                 //me.SB = new SeekBehaviour(me);
-                //me.SB = new FleeBehaviour(me);
+                me.SB = new FleeBehaviour(me);
                 //me.SB = new ArriveBehaviour(me);
-                me.SB = new WanderBehaviour(me);
+                //me.SB = new WanderBehaviour(me);
                 me.Update(0.8f);
                 _spriteBatch.Begin();
                 _spriteBatch.Draw(me.Texture, new Vector2((float)me.Pos.X, (float)me.Pos.Y), Color.White);

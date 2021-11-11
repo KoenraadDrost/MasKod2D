@@ -62,6 +62,13 @@ namespace MasKod2D
             return this;
         }
 
+        public Vector2D divide(float value)
+        {
+            this.X = X / value;
+            this.Y = Y / value;
+            return this;
+        }
+
         public Vector2D Perpendicular()
         {
             return new Vector2D(-Y, X);
@@ -84,6 +91,16 @@ namespace MasKod2D
         public static Vector2D operator *(float f1, Vector2D v1)
         {
             return v1 * f1;
+        }
+
+        public static Vector2D operator /(Vector2D v1, double f1)
+        {
+            return v1.divide(f1);
+        }
+
+        public static Vector2D operator /(Vector2D v1, float f1)
+        {
+            return v1.divide(f1);
         }
 
         public Vector2D Normalize()

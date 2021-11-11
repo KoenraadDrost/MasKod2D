@@ -29,7 +29,7 @@ namespace MasKod2D.state
 
             Script script = new Script(0);
             // D:\My Documents\Studie\Jaar 4\Semester 2 Gamesprogramming\Algorythms and Artificial Intelligence\PairProject\MasKod2D\state\Roam.lua
-            StreamReader sr = new StreamReader("D:/My Documents/Studie/Jaar 4/Semester 2 Gamesprogramming/Algorythms and Artificial Intelligence/PairProject/MasKod2D/state/Roam.lua");
+            StreamReader sr = new StreamReader("D:/My Documents/Studie/Jaar 4/Semester 2 Gamesprogramming/Algorythms and Artificial Intelligence/PairProject/MasKod2D/script/state/Roam.lua");
             string tempString = sr.ReadToEnd();
             //Console.WriteLine($"script result: {Script.RunFile("Roam")} ");
             DynValue res = Script.RunString(tempString);
